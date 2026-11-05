@@ -23,7 +23,7 @@ function fmtDur(ms: number): string {
   const m = Math.floor(ms / 60000)
   const d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60
   if (d > 0) return `${d}d${h}h`
-  if (h > 0) return `${h}h${mm}m`
+  if (h > 0) return mm ? `${h}h${mm}m` : `${h}h`
   return `${mm}m`
 }
 function fmtTokens(n: number): string {
@@ -149,19 +149,19 @@ export const register: Register = on => {
     // 最危险的一项决定边框颜色
     const worst = [ttlColor, ...(u?.limits ?? []).map(l => level(l.percent)), ctxPct != null ? level(ctxPct) : 'success']
     const border = worst.includes('error') ? 'error' : worst.includes('warning') ? 'warning' : 'success'
-    const B = (color: string, text: string) => <Text color={color} weight="bold">{text}</Text>
+    const B = (color: string, text: string) => <Text color={color} bold weight="bold">{text}</Text>
 
     return (
       <Box borderStyle="round" borderColor={border} paddingX={1}>
         <Text>
-          <Text weight="bold">缓存 </Text>
+          <Text bold weight="bold">缓存 </Text>
           {B(hit >= 80 ? 'success' : hit >= 50 ? 'warning' : 'error', `${hit}%`)}
           <Text>  </Text>
           {B(ttlColor, left > 0 ? `⏳ ${fmtDur(left)}` : '已过期')}
           {(u?.limits ?? []).map(l => (
             <Text key={l.kind}>
               <Text>   │   </Text>
-              <Text weight="bold">{label(l.kind)} </Text>
+              <Text bold weight="bold">{label(l.kind)} </Text>
               {B(level(l.percent), `${Math.round(l.percent)}%`)}
               {l.resetsAt ? <Text> ↻{fmtDur(l.resetsAt - now)}</Text> : null}
             </Text>
@@ -169,7 +169,7 @@ export const register: Register = on => {
           {u?.tokens != null ? (
             <Text key="ctx">
               <Text>   │   </Text>
-              <Text weight="bold">上下文 </Text>
+              <Text bold weight="bold">上下文 </Text>
               {B(ctxPct != null ? level(ctxPct) : 'text', `${fmtTokens(u.tokens)}/${fmtTokens(u.window)}`)}
             </Text>
           ) : null}

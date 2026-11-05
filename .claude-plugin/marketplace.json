@@ -1,0 +1,6 @@
+{
+  "name": "claude-cache-reminder",
+  "description": "Prompt-cache countdown and /compact reminder for Claude Code",
+  "owner": { "name": "liliyy2" },
+  "plugins": [{ "name": "cache-reminder", "source": "./" }]
+}

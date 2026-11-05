@@ -1,0 +1,10 @@
+{
+  "name": "cache-reminder",
+  "version": "0.1.0",
+  "description": "缓存命中率、过期倒计时、5h/7d 额度和上下文大小，快过期时提醒先 /compact",
+  "types": "./types/index.d.ts",
+  "license": "MIT",
+  "author": {
+    "name": "liliyy2"
+  }
+}

@@ -146,27 +146,34 @@ export const register: Register = on => {
     const label = (k: string) => (k === 'five_hour' ? '5h' : k === 'seven_day' ? '7d' : k)
     const ctxPct = u?.tokens != null && u.window ? (u.tokens / u.window) * 100 : null
 
+    // 最危险的一项决定边框颜色
+    const worst = [ttlColor, ...(u?.limits ?? []).map(l => level(l.percent)), ctxPct != null ? level(ctxPct) : 'success']
+    const border = worst.includes('error') ? 'error' : worst.includes('warning') ? 'warning' : 'success'
+    const B = (color: string, text: string) => <Text color={color} weight="bold">{text}</Text>
+
     return (
-      <Box>
-        <Text dimColor>缓存 </Text>
-        <Text color={hit >= 80 ? 'success' : hit >= 50 ? 'warning' : 'error'}>{hit}%</Text>
-        <Text> </Text>
-        <Text color={ttlColor}>{left > 0 ? `⏳${fmtDur(left)}` : '已过期'}</Text>
-        {(u?.limits ?? []).map(l => (
-          <Text key={l.kind}>
-            <Text dimColor> │ {label(l.kind)} </Text>
-            <Text color={level(l.percent)}>{Math.round(l.percent)}%</Text>
-            {l.resetsAt ? <Text dimColor> ↻{fmtDur(l.resetsAt - now)}</Text> : null}
-          </Text>
-        ))}
-        {u?.tokens != null ? (
-          <Text key="ctx">
-            <Text dimColor> │ 上下文 </Text>
-            <Text color={ctxPct != null ? level(ctxPct) : 'text'}>
-              {fmtTokens(u.tokens)}/{fmtTokens(u.window)}
+      <Box borderStyle="round" borderColor={border} paddingX={1}>
+        <Text>
+          <Text weight="bold">缓存 </Text>
+          {B(hit >= 80 ? 'success' : hit >= 50 ? 'warning' : 'error', `${hit}%`)}
+          <Text>  </Text>
+          {B(ttlColor, left > 0 ? `⏳ ${fmtDur(left)}` : '已过期')}
+          {(u?.limits ?? []).map(l => (
+            <Text key={l.kind}>
+              <Text>   │   </Text>
+              <Text weight="bold">{label(l.kind)} </Text>
+              {B(level(l.percent), `${Math.round(l.percent)}%`)}
+              {l.resetsAt ? <Text> ↻{fmtDur(l.resetsAt - now)}</Text> : null}
             </Text>
-          </Text>
-        ) : null}
+          ))}
+          {u?.tokens != null ? (
+            <Text key="ctx">
+              <Text>   │   </Text>
+              <Text weight="bold">上下文 </Text>
+              {B(ctxPct != null ? level(ctxPct) : 'text', `${fmtTokens(u.tokens)}/${fmtTokens(u.window)}`)}
+            </Text>
+          ) : null}
+        </Text>
       </Box>
     )
   })
